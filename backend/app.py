@@ -40,9 +40,9 @@ def predict_product_sales():
         'Product_MRP': product_data['Product_MRP'],
         'Store_Id': product_data['Store_Id'],
         'Store_Establishment_Year': product_data['Store_Establishment_Year'],
-        'Store_Size ': product_data['Store_Size '],
+        'Store_Size': product_data['Store_Size'],
         'Store_Location_City_Type': product_data['Store_Location_City_Type'],
-        'Store_Type  ': product_data['Store_Type'],
+        'Store_Type': product_data['Store_Type'],
         'Product_Type_Category': product_data['Product_Type_Category'],
         'store_age_years': product_data['store_age_years']
     }
