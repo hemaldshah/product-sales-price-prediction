@@ -70,6 +70,10 @@ def predict_product_sales_batch():
     It expects a CSV file containing property details for multiple properties
     and returns the predicted product sales as a dictionary in the JSON response.
     """
+
+    if 'file' not in request.files:
+        return jsonify({"error": "No file uploaded under 'file' key"}), 400
+
     # Get the uploaded CSV file from the request
     file = request.files['file']
 
@@ -77,15 +81,16 @@ def predict_product_sales_batch():
     input_data = pd.read_csv(file)
 
     # Make predictions for all properties in the DataFrame (get log_prices)
-    predicted_product_sales = model.predict(input_data).tolist()
+    predictions = model.predict(input_data).tolist()
+    predictions = [round(float(p), 2) for p in predictions]
 
-    # Create a dictionary of predictions with property IDs as keys
-    product_ids = input_data['Product_Id'].tolist()  # Assuming 'id' is the property ID column
-    output_dict = dict(zip(product_ids, predicted_product_sales))  # Use actual prices
-
-    # Return the predictions dictionary as a JSON response
-    return output_dict
-
+    # Attach predictions back to identifiers to avoid dictionary key collisions
+    input_data['Predicted_Product_Sales'] = predictions
+    
+    # Return list of results preserving all rows
+    result = input_data[['Product_Id', 'Store_Id', 'Predicted_Product_Sales']].to_dict(orient='records')
+    return jsonify(result)
+   
 # Run the Flask application in debug mode if this script is executed directly
 if __name__ == '__main__':
     product_sales_predictor_api.run(debug=True)
